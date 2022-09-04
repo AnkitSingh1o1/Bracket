@@ -14,10 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linearLayout"
-        android:stackFromBottom="true"
+        android:cacheColorHint="#FFFFFF"
         android:divider="@android:color/transparent"
+        android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
-        tools:listitem="@layout/item_message"/>
+        tools:listitem="@layout/item_message" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -47,7 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:enabled="false"
-            android:text="@string/send_button_label"/>
+            android:text="@string/send_button_label"
+            android:textColor="#4A6572"
+            android:textColorHint="#FFFFFF" />
 
     </LinearLayout>
 

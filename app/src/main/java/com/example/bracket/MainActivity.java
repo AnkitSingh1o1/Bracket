@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -208,7 +208,8 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }else if(requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK){
-                Uri selectedImageUri = data.getData();
+            assert data != null;
+            Uri selectedImageUri = data.getData();
                 //Get a reference to store file at cht_photos
                 StorageReference photoRef =
                         mChatPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
