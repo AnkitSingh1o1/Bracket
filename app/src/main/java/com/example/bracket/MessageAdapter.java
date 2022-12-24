@@ -12,9 +12,15 @@ import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+
 public class MessageAdapter extends ArrayAdapter<FriendlyMessage> {
+    private Cryptography cryptography;
     public MessageAdapter(@NonNull Context context, int resource, @NonNull List<FriendlyMessage> objects) {
         super(context, resource, objects);
     }
@@ -41,10 +47,16 @@ public class MessageAdapter extends ArrayAdapter<FriendlyMessage> {
         } else {
             messageTextView.setVisibility(View.VISIBLE);
             photoImageView.setVisibility(View.GONE);
-            messageTextView.setText(message.getText());
+            cryptography = new Cryptography();
+            try {
+                messageTextView.setText(cryptography.AESDecryptionMethod(message.getText()));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         authorTextView.setText(message.getName());
 
         return convertView;
     }
+
 }

@@ -37,9 +37,18 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
+    private Cryptography cryptography;
     private ProgressBar mProgressBar;
     private ImageButton mPhotoPickerButton;
     private EditText mMessageEditText;
@@ -67,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mChatPhotosStorageReference;
 
+    private byte encryptionKey[] = {9, 43, 65, 33, 76, 88, 22, -34, -55, -102, 81, 3, 42, 85, -23, -48};
+    private Cipher cipher, decipher;
+    private SecretKeySpec secretKeySpec;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +92,17 @@ public class MainActivity extends AppCompatActivity {
         mFirebaseStorage = FirebaseStorage.getInstance();
 
         mMessagesDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+        try{
+            cipher = Cipher.getInstance("AES");
+            decipher = Cipher.getInstance("AES");
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        secretKeySpec = new SecretKeySpec(encryptionKey, "AES");
+
+
         mChatPhotosStorageReference = mFirebaseStorage.getReference().child("chat_photos");
 
         // Initialize references to views
@@ -91,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize message ListView and its adapter
         List<FriendlyMessage> friendlyMessages = new ArrayList<>();
         mMessageAdapter = new MessageAdapter(this, R.layout.item_message, friendlyMessages);
+        cryptography = new Cryptography();
         mMessageListView.setAdapter(mMessageAdapter);
 
         // Initialize progress bar
@@ -135,12 +160,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // TODO: Send messages on click
                 FriendlyMessage friendlyMessage = new
-                        FriendlyMessage(mMessageEditText.getText().toString(), mUsername, null);
+                        FriendlyMessage(cryptography.AESEncryptionMethod(mMessageEditText.getText().
+                        toString()), mUsername, null);
                 mMessagesDatabaseReference.push().setValue(friendlyMessage);
                 // Clear input box
                 mMessageEditText.setText("");
             }
         });
+
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -166,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {

@@ -1,9 +1,20 @@
 package com.example.bracket;
 
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
 public class FriendlyMessage {
     private String text;
     private String name;
     private String photoUrl;
+
 
     public FriendlyMessage() {
     }
@@ -37,4 +48,7 @@ public class FriendlyMessage {
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
     }
+
 }
+
+
